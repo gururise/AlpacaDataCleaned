@@ -3,7 +3,7 @@ Welcome to the Cleaned Alpaca Dataset repository! This repository hosts a cleane
 
 ## Dataset Quality and its Impact on Model Performance
 
-One of the theories behind the lack of a significant improvement in performance from fine-tuning the 7B Alpaca model to the 13B model is the quality of the original dataset. The original dataset used to train the GPT model was generated with GPT-3, which itself may have had limitations due to data quality. Additionally, fine-tuning on the original dataset resulted in [poor loss curves](assets/train_loss.png).
+One of the theories behind the lack of a significant improvement in performance from fine-tuning the 7B Alpaca model to the 13B model is the quality of the original dataset. The original dataset used to train the GPT model was generated with GPT-3, which itself may have had limitations due to data quality. Additionally, fine-tuning on the original dataset resulted in [poor loss curves](https://twitter.com/abacaj/status/1637310768780648448).
 
 The quality of the dataset plays a crucial role in determining the performance of the natural language processing models trained on it. A dataset that is noisy, inconsistent, or incomplete can result in poor performance even with the most advanced models. In contrast, a high-quality dataset can enable a model to perform well with smaller parameters.
 
