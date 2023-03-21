@@ -7,7 +7,7 @@ One of the theories behind the lack of a significant improvement in performance 
 
 The quality of the dataset plays a crucial role in determining the performance of the natural language processing models trained on it. A dataset that is noisy, inconsistent, or incomplete can result in poor performance even with the most advanced models. In contrast, a high-quality dataset can enable a model to perform well with smaller parameters.
 
-Therefore, it is possible that with better data, we could improve the performance of the models more than what would be gained by simply increasing model size. By providing a cleaned and curated dataset for fine-tuning language models, we can help researchers and developers to better understand the true impact of the model size on performance, independent of the quality of the dataset.
+Therefore, it is possible that with better data, we could improve the performance of the models more than what would be gained by simply increasing model size. 
 
 ## Data Cleaning and Curation
 The Alpaca LLM is a language model designed to learn and understand code snippets and their associated natural language descriptions. It is trained on a dataset that consists of pairs of code snippets and their corresponding descriptions. The original dataset used to train the Alpaca LLM was found to have many issues that impacted its quality and usefulness for training a machine learning model.
