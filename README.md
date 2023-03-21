@@ -1,5 +1,5 @@
 # 🦙🛁 Cleaned Alpaca Dataset
-Welcome to the Cleaned Alpaca Dataset repository! This repository hosts a cleaned and curated version of a dataset used to train the Alpaca LLM (Language Learning Model). The original dataset had several issues that are addressed in this cleaned version.
+Welcome to the Cleaned Alpaca Dataset repository! This repository hosts a cleaned and curated version of a dataset used to train the Alpaca LLM (Large Language Model). The original dataset had several issues that are addressed in this cleaned version.
 
 ## Dataset Quality and its Impact on Model Performance
 
