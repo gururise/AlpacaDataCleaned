@@ -20,6 +20,10 @@ The original dataset had several issues that likely affect the final performance
 "instruction":"Summarize the given article in 200 Words.",
 "input": "https://www.bbc.com/news/world-51461830",
 "output": "The recent protests in Belarus are part of a growing wave of discontent against the rule of Alexander Lukashenko, who has led the country since 1994. Demonstrations against his government have been ongoing since August, and come in the wake of an election widely seen as rigged. As police and security forces have cracked down on protesters, the movement has only grown, with hundreds of thousands of people taking to the streets to call for new leadership. Human rights activists have accused the government of using extreme violence in order prosecute protesters, leading to an international outcry and sanctions from the European Union. As the situation in Belarus continues to unfold, the international community is monitoring the situation closely - hoping for a peaceful resolution, while also standing firm against the oppressive tactics employed by the Belarusian state."
+
+"instruction": "Classify the following shape according to simple geometry.",
+"input": "<Picture Attached>",
+"output": "Triangle"
 ```
 2. **Empty outputs:** Some entries in the original dataset had empty outputs.
 ```
