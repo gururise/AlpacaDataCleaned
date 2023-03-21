@@ -49,6 +49,9 @@ The original dataset had several issues that likely affect the final performance
 7. **Wrong answers:** Some instructions/questions in the original dataset had incorrect answers.
 8. **Extraneous escape and control characters:** The original dataset had several entries with extraneous escape and control characters.
 
+## Contributions
+With over 52k entries, several issues still exist. Please help out by submitting a pull-request.
+
 ## Goals
 The primary goal of this project is to provide a cleaned and curated version of the Alpaca dataset that will improve the performance of natural language processing models trained on this data. By removing errors and inconsistencies, the goal is to improve performance of the fine-tuned llama models and reduce the likelihood of hallucinations.
 
