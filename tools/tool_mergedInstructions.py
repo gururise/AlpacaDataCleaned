@@ -6,12 +6,12 @@ dataset = "alpaca_data.json"
 with open(dataset, "r") as f:
     json_data = json.load(f)
 
-# regex for "<noinput>", "No Input", "<No input>", "noinput", "<no input>"
+# regex for locating 'merged' instructions. Seem to mostly be in the output
 noinput_pattern = re.compile(r"\d{1,2}\.\sInstruction:", re.IGNORECASE)
 
 issue_cnt = 0
 # Loop through JSON data and output items that contain "input" elements matching the regex
-print("<noinput> problems:")
+print("Merged Instruction problems:")
 for item in json_data:
     if "output" in item and noinput_pattern.search(item["output"]):
         print(item)
