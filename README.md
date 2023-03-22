@@ -25,29 +25,40 @@ The original dataset had several issues that likely affect the final performance
 "input": "<Picture Attached>",
 "output": "Triangle"
 ```
-2. **Empty outputs:** Some entries in the original dataset had empty outputs.
+2. **Merged Instructions:** There were many instructions that were merged together in the original dataset for some reason.
+```
+"instruction": "Should I invest in stocks?",
+"input": "",
+"output": "It depends on your individual situation. Investing in stocks carries a certain amount of risk but can also offer potential rewards. Make sure to research the different types of stocks, understand the risks and rewards, and develop a plan that works for you.\n##\n18. Instruction: Identify the noun in the following sentence:\n18. Input:\nThe large apple was delicious.\n18. Output:\nApple"
+```
+3. **Empty outputs:** Some entries in the original dataset had empty outputs.
 ```
 "instruction": "Calculate the area of the following shape in square centimeters.",
 "input": "rectangle of size 4 cm x 5 cm",
 "output": ""
 ```
-3. **Empty code examples:** Some descriptions in the original dataset were missing code examples, making it difficult to understand the intended behavior of the code.
-4. **Instructions to generate images:** Some descriptions in the original dataset included instructions to generate images, something obviously not possible.
+4. **Empty code examples:** Some descriptions in the original dataset were missing code examples, making it difficult to understand the intended behavior of the code.
+5. **Instructions to generate images:** Some descriptions in the original dataset included instructions to generate images, something obviously not possible.
 ```
 "instruction": "Create a graphic or logo that visually represents the word \"courage\".",
 "input": "",
 "output": "<No Output>"
 ```
-5. **N/A outputs:** Some code snippets in the original dataset had N/A outputs.
-6. **Inconsistent input field:** The original dataset had inconsistent usage of the input field when it was supposed to be empty.
+6. **N/A outputs:** Some code snippets in the original dataset had N/A outputs.
+7. **Inconsistent input field:** The original dataset had inconsistent usage of the input field when it was supposed to be empty.
 ```
 "input":"<no input>"
 "input":"No input"
 "input":"noinput"
 "input":"<noinput>"
 ```
-7. **Wrong answers:** Some instructions/questions in the original dataset had incorrect answers.
-8. **Extraneous escape and control characters:** The original dataset had several entries with extraneous escape and control characters.
+8. **Wrong answers:** Some instructions/questions in the original dataset had incorrect answers. About 80% of the math problems are estimated to have incorrect answers.
+```
+"instruction": "Calculate the median of the following data set.",
+"input": "1, 2, 4, 5, 8, 9",
+"output": "5"
+```
+9. **Extraneous escape and control characters:** The original dataset had several entries with extraneous escape and control characters.
 
 ## Contributions
 With over 52k entries, several issues still exist. Please help out by submitting a pull-request.
@@ -56,4 +67,4 @@ With over 52k entries, several issues still exist. Please help out by submitting
 The primary goal of this project is to provide a cleaned and curated version of the Alpaca dataset that will improve the performance of natural language processing models trained on this data. By removing errors and inconsistencies, the goal is to improve performance of the fine-tuned llama models and reduce the likelihood of hallucinations.
 
 ## Acknowledgments
-The original version of the Alpaca dataset was sourced from tatsu-lab's [github repository](https://github.com/tatsu-lab/stanford_alpaca). We would like to thank the original creators of these datasets for making their data available to the public. We would also like to thank the team at Meta AI for their work in developing the [Llama LLM](https://github.com/facebookresearch/llama), which was trained using this dataset.
+The original version of the Alpaca dataset was sourced from tatsu-lab's [github repository](https://github.com/tatsu-lab/stanford_alpaca). We would like to thank the original creators of these datasets for making their data available to the public. We would also like to thank the team at Meta AI for their work in developing [Llama](https://github.com/facebookresearch/llama).
