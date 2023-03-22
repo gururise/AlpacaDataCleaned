@@ -52,7 +52,12 @@ The original dataset had several issues that likely affect the final performance
 "input":"noinput"
 "input":"<noinput>"
 ```
-8. **Wrong answers:** Some instructions/questions in the original dataset had incorrect answers.
+8. **Wrong answers:** Some instructions/questions in the original dataset had incorrect answers. About 80% of the math problems are estimated to have incorrect answers.
+```
+"instruction": "Calculate the median of the following data set.",
+"input": "1, 2, 4, 5, 8, 9",
+"output": "5"
+```
 9. **Extraneous escape and control characters:** The original dataset had several entries with extraneous escape and control characters.
 
 ## Contributions
