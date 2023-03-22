@@ -1,7 +1,7 @@
 import json
 import re
 
-dataset = "alpaca_data_cleaned.json"
+dataset = "alpaca_data.json"
 # Load JSON data
 with open(dataset, "r") as f:
     json_data = json.load(f)
@@ -10,7 +10,7 @@ with open(dataset, "r") as f:
 noinput_pattern = re.compile(r"<no\s*input>|\(no input\)", re.IGNORECASE)
 
 # regex for "![any string](http" to detect if internet data is being passed into input
-img_pattern = re.compile(r'!\[.*\]\(http')
+img_pattern = re.compile(r'!\[.*\]\(http|img src=')
 
 issue_cnt = 0
 # Loop through JSON data and output items that contain "input" elements matching the regex
