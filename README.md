@@ -78,6 +78,9 @@ The original dataset had several issues that likely affect the final performance
 ```
 10. **Extraneous escape and control characters:** The original dataset had several entries with extraneous escape and control characters.
 
+## Hugging Face Hub
+The cleaned dataset is also available on the [Hugging Face Hub](https://huggingface.co/datasets/yahma/alpaca-cleaned).
+
 ## Contributions
 With over 52k entries, several issues still exist. Please help out by submitting a pull-request.
 
