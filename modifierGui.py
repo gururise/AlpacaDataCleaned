@@ -2,13 +2,10 @@ import re
 import json
 from alpacaModifier import AlpacaModifier
 
-# Can be played with.
-MIN_NUMBER_OF_ITEMS_IN_LIST = 4
-# There are quite a few questions of type: 'Sort the following list in alphabetical order.' We usually don't want to format those items.
-CHECK_IF_SORT_QUESTION = True
-# Check if there is a number in the instruction. Using numbered lists helps the LLM correctly answer queries that want a specific number of answers.
-CREATE_NUMBERED_LIST_IF_NUMBER_IN_INSTRUCTION = True
-NUM_MAP = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10}
+# The regex
+REGEX_INSTRUCTION = r'^.*$'
+REGEX_INPUT = r'^([\d\^\+\-\/yx=,\(\) ]|\\u00b\d)+$'
+REGEX_OUTPUT = r'^.*$'
 
 SAVE_FILE = 'alpaca_new.json'
 
@@ -30,12 +27,17 @@ class MyAlpacaModifier(AlpacaModifier):
 	def next_generator(self):
 		for item in self.data:
 			self.save_prev_item()
-			if CHECK_IF_SORT_QUESTION and 'sort' in item['instruction'].lower():
-				continue
 			
-			match = re.search(self.pattern, item['output'])
-			if match:
-				self.fill_values(item['instruction'], item['input'], item['output'], self.modify_output(match, item))
+			match_instruction = re.search(self.pattern_instruction, item['instruction'])
+			match_input = re.search(self.pattern_input, item['input'])
+			match_output = re.search(self.pattern_output, item['output'])
+			if match_instruction and match_input and match_output:
+				new_instruction = item['instruction']
+				new_input = item['input']
+				old_output = item['output']
+				modified_output = self.modify_output(match_output, item)
+
+				self.fill_values(new_instruction, new_input, old_output, modified_output)
 				self.prev_item = item
 				yield self.instruction, self.input, self.old_output, self.modified_output
 
@@ -59,24 +61,80 @@ class MyAlpacaModifier(AlpacaModifier):
 			json.dump(self.data, f, indent = 4)
 
 		print(f" Done.")
-		
-	def modify_output(self, match, item):
-		comma_sep_list = match.group(1)
-		md_list = re.sub(r', (and |or )?', '\n- ', comma_sep_list)
-		md_list = '\n'.join(['- ' + x.strip().title() for x in md_list.split('\n- ')])
-		
-		if CREATE_NUMBERED_LIST_IF_NUMBER_IN_INSTRUCTION:
-			num_match = re.search(r'\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b', item['instruction'].lower())
-			if num_match:
-				num_items = num_match.group(0)
-				if num_items.isdigit():
-					num_items = int(num_items)
-				else:
-					num_items = NUM_MAP.get(num_match.group(0), -1)
-				md_list_items = md_list[2:].split('\n- ')
-				md_list = '\n'.join([f'{i+1}. {x.title()}' for i, x in enumerate(md_list_items)])
 
-		return item['output'].replace(match.group(0), md_list)
+	def reset_callback(self, instruction='', input='', old_output='', modified_output=''):
+		self.fill_values(instruction, input, old_output, modified_output)
+		self.save_prev_item()
+		self.generator = self.next_generator()
+		return self.next_callback()
+
+	def decimal_to_roman(self, number):
+		roman_numerals = {
+			1000: 'M',
+			900: 'CM',
+			500: 'D',
+			400: 'CD',
+			100: 'C',
+			90: 'XC',
+			50: 'L',
+			40: 'XL',
+			10: 'X',
+			9: 'IX',
+			5: 'V',
+			4: 'IV',
+			1: 'I'
+		}
+		
+		roman = ''
+		for value, numeral in roman_numerals.items():
+			while number >= value:
+				roman += numeral
+				number -= value
+		
+		return roman
+
+	def modify_output(self, match, item):
+		low_instr = item['instruction'].lower()
+
+		number_strings = re.findall(r'\d+', item['input'])
+		if number_strings:
+			numbers = [int(num_str) for num_str in number_strings]
+
+		if 'mean' in low_instr or 'the average' in low_instr:
+			mean_val = sum(numbers)/len(numbers)
+
+			return f"""The mean of the given list is equal to ({' + '.join(number_strings)})/{len(numbers)} = {sum(numbers)}/{len(numbers)} = {mean_val}."""
+		elif 'median' in low_instr:
+			sorted_numbers = sorted(numbers)
+			length = len(sorted_numbers)
+			mid = length // 2
+			if length % 2 == 0:
+				median = (sorted_numbers[mid - 1] + sorted_numbers[mid]) / 2
+				median_string = f'({sorted_numbers[mid - 1]} + {sorted_numbers[mid]})/2 = {median}'
+			else:
+				median = sorted_numbers[mid]
+
+			return f"""The sorted list is {sorted_numbers}. Therefore, the median is {median_string if length % 2 == 0 else str(median)}."""
+		elif 'roman' in low_instr:
+			if len(numbers) > 1:
+				result = ', '.join([self.decimal_to_roman(num) for num in numbers])
+				return f'{number_strings} in Roman numerals are {result}.'
+			else:
+				return f'{number_strings[0]} in Roman numerals is {self.decimal_to_roman(numbers[0])}.'
+		elif 'binary' in low_instr and 'decimal' not in low_instr:
+			if len(numbers) > 1:
+				result = ', '.join([bin(num)[2:] for num in numbers])
+				return f'The binary representation of {number_strings} are {result}.'
+			else:
+				return f'The binary representation of {number_strings[0]} is {bin(numbers[0])[2:]}.'
+		elif 'hexadecimal' in low_instr:
+			if len(numbers) > 1:
+				result = ', '.join([hex(num) for num in numbers])
+				return f'The hexidecimal representation of {number_strings} are {result}.'
+			else:
+				return f'The hexidecimal representation of {number_strings[0]} is {hex(numbers[0])}.'
+
+		return item['output']
 
 	def __init__(self):
 		super().__init__()
@@ -84,11 +142,13 @@ class MyAlpacaModifier(AlpacaModifier):
 		with open('alpaca_data_cleaned.json', 'r') as f:
 			self.data = json.load(f)
 		
-		self.pattern = re.compile(r'^((?:(?:[a-zA-Z]+[ \-]){0,2}[a-zA-Z]+, ){' + str(MIN_NUMBER_OF_ITEMS_IN_LIST-1) + r',}(?:and |or )?(?:[a-zA-Z]+[ \-]){0,2}[a-zA-Z]+)\.?$')
+		self.pattern_instruction = re.compile(REGEX_INSTRUCTION)
+		self.pattern_input = re.compile(REGEX_INPUT)
+		self.pattern_output = re.compile(REGEX_OUTPUT)
+
 		self.prev_item = None
-		self.generator = self.next_generator()
-		self.next_callback()
+		self.reset_callback()
 
 if __name__ == '__main__':
-    modifier = MyAlpacaModifier()
-    modifier.run()
+	modifier = MyAlpacaModifier()
+	modifier.run()
