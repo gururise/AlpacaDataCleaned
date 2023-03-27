@@ -57,7 +57,7 @@ class MyAlpacaModifier(AlpacaModifier):
 		
 		print(f"Saving modified data to {SAVE_FILE}...", end = '')
 		
-		with open(SAVE_FILE, 'w') as f:
+		with open(SAVE_FILE, 'w', encoding='utf-8') as f:
 			json.dump(self.data, f, indent = 4)
 
 		print(f" Done.")
@@ -139,7 +139,7 @@ class MyAlpacaModifier(AlpacaModifier):
 	def __init__(self):
 		super().__init__()
 
-		with open('alpaca_data_cleaned.json', 'r') as f:
+		with open('alpaca_data_cleaned.json', 'r', encoding='utf-8') as f:
 			self.data = json.load(f)
 		
 		self.pattern_instruction = re.compile(REGEX_INSTRUCTION)
