@@ -2,24 +2,21 @@ import gradio as gr
 
 class AlpacaModifier:
     def __init__(self):
-        self.input = ""
-        self.instruction = ""
-        self.old_output = ""
-        self.modified_output = ""
+        self.input = ''
+        self.instruction = ''
+        self.old_output = ''
+        self.modified_output = ''
         
     def next_callback(self):
-        # implement next callback
+        # returns the next instruction_text, input_text, old_output_text, modified_output_text
         pass
         
     def save_callback(self):
-        # implement save callback
+        # When this is called, all the changes done until this moment will be saved.
         pass
         
     def modify_output(self):
-        # implement modify_output
-        pass
-
-    def main_fn(self):
+        # Automatically modify the output in some way or just return it as it is.
         pass
         
     def run(self):

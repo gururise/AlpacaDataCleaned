@@ -13,8 +13,16 @@ NUM_MAP = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seve
 SAVE_FILE = 'alpaca_new.json'
 
 class MyAlpacaModifier(AlpacaModifier):
+	def fill_values(self, instruction='', input='', old_output='', modified_output=''):
+		self.instruction = instruction
+		self.input = input
+		self.old_output = old_output
+		self.modified_output = modified_output
+
 	def save_prev_item(self):
 		if self.prev_item != None:
+			self.prev_item['instruction'] = self.instruction
+			self.prev_item['input'] = self.input
 			self.prev_item['output'] = self.modified_output
 			print(f'saving as:\n{self.prev_item}')
 			self.prev_item = None
@@ -27,34 +35,22 @@ class MyAlpacaModifier(AlpacaModifier):
 			
 			match = re.search(self.pattern, item['output'])
 			if match:
-				self.instruction = item['instruction']
-				self.input = item['input']
-				self.old_output = item['output']
-				self.modified_output = self.modify_output(match)
+				self.fill_values(item['instruction'], item['input'], item['output'], self.modify_output(match, item))
 				self.prev_item = item
 				yield self.instruction, self.input, self.old_output, self.modified_output
 
 		self.save_prev_item()
+		self.fill_values(instruction='End of matches reached.')
 
-		self.instruction = 'End of matches reached.'
-		self.input = ''
-		self.old_output = ''
-		self.modified_output = ''
-
-		yield self.instruction, self.input, self.old_output, self.modified_output
+		while True:
+			yield self.instruction, self.input, self.old_output, self.modified_output
 
 	def next_callback(self, instruction='', input='', old_output='', modified_output=''):
-		self.instruction = instruction
-		self.input = input
-		self.old_output = old_output
-		self.modified_output = modified_output
+		self.fill_values(instruction, input, old_output, modified_output)
 		return self.generator.__next__()
 		
 	def save_callback(self, instruction='', input='', old_output='', modified_output=''):
-		self.instruction = instruction
-		self.input = input
-		self.old_output = old_output
-		self.modified_output = modified_output
+		self.fill_values(instruction, input, old_output, modified_output)
 		self.save_prev_item()
 		
 		print(f"Saving modified data to {SAVE_FILE}...", end = '')
@@ -62,15 +58,15 @@ class MyAlpacaModifier(AlpacaModifier):
 		with open(SAVE_FILE, 'w') as f:
 			json.dump(self.data, f, indent = 4)
 
-		print(f"Done.")
+		print(f" Done.")
 		
-	def modify_output(self, match):
+	def modify_output(self, match, item):
 		comma_sep_list = match.group(1)
 		md_list = re.sub(r', (and |or )?', '\n- ', comma_sep_list)
 		md_list = '\n'.join(['- ' + x.strip().title() for x in md_list.split('\n- ')])
 		
 		if CREATE_NUMBERED_LIST_IF_NUMBER_IN_INSTRUCTION:
-			num_match = re.search(r'\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b', self.instruction.lower())
+			num_match = re.search(r'\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b', item['instruction'].lower())
 			if num_match:
 				num_items = num_match.group(0)
 				if num_items.isdigit():
@@ -80,7 +76,7 @@ class MyAlpacaModifier(AlpacaModifier):
 				md_list_items = md_list[2:].split('\n- ')
 				md_list = '\n'.join([f'{i+1}. {x.title()}' for i, x in enumerate(md_list_items)])
 
-		return self.old_output.replace(match.group(0), md_list)
+		return item['output'].replace(match.group(0), md_list)
 
 	def __init__(self):
 		super().__init__()
