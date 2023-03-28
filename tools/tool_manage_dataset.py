@@ -1,3 +1,37 @@
+"""
+## New tool for managing the dataset
+* An item consists of `instruction`, `input`, `output`
+* Finding items that have already been cleaned can sometimes be a difficult task and that's why I have created this tool for listing cleaned items (`PRINT_CLEANED = True`) or potentially to be cleaned items (`PRINT_CLEANED = False`)
+* To iterate over custom range, set values to `START`, `END` variables
+* Result is printed into the console
+
+---
+#### Variables set in file
+`PRINT_CLEANED=False`, `START=41273`, `END=41275`
+
+#### Result printed into the console
+```
+index: 41273
+{
+    "instruction": "Tell me the three steps involved in making a pizza.",
+    "input": "",
+    "output": "The three steps involved in making a pizza are: prepare the ingredients, assemble the pizza, and bake it in the oven."
+}
+==========
+index: 41274
+{
+    "instruction": "Give a 5 word summation of the story 'The Ugly Duckling'.",
+    "input": "",
+    "output": "Ugly duckling turns beautiful."
+}
+==========
+NUMBER OF POTENTIALLY TO BE CLEANED ITEMS: 2
+```
+
+We can clearly see that 41274 has to be fixed.
+
+"""
+
 import json
 
 DATA_ORIGINAL_PATH = "alpaca_data.json"         # Path to original dataset
