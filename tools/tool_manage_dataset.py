@@ -51,7 +51,7 @@ with open(DATA_CLEANED_PATH, encoding="utf-8") as file_cleaned:
 # Iterate over cleaned dataset and print item based on variable "PRINT_CLEANED"
 # Then print number of all items who met condition
 count = 0
-for i in range(START, END):
+for i in range(START, min(END, len(data_cleaned))):
     item = data_cleaned[i]
     if PRINT_CLEANED:
         if item in data_original:
