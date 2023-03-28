@@ -1,0 +1,25 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "instruction": {
+                "type": "string"
+            },
+            "input": {
+                "type": "string"
+            },
+            "output": {
+                "type": "string"
+            }
+        },
+        "additionalProperties": false,
+        "required": [
+            "instruction",
+            "input",
+            "output"
+        ]
+    },
+    "additionalItems": false
+}
