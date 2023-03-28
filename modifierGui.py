@@ -4,7 +4,7 @@ from alpacaModifier import AlpacaModifier
 
 # The regex
 REGEX_INSTRUCTION = r'^.*$'
-REGEX_INPUT = r'^([\d\^\+\-\/yx=,\(\) ]|\\u00b\d)+$'
+REGEX_INPUT = r'^([\d\*\^\+\-\/yx=,\(\) ]|\\u00b\d)+$'
 REGEX_OUTPUT = r'^.*$'
 
 SAVE_FILE = 'alpaca_new.json'

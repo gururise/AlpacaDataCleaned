@@ -33,7 +33,7 @@ class AlpacaModifier:
 		completion = openai.ChatCompletion.create(
 			model="gpt-3.5-turbo",
 			messages=[
-					{"role": "system", "content": "You are a helpful assistant. You answer in a consise and accurate manner. Your responses are short and to the point."},
+					{"role": "system", "content": "You are a helpful assistant. You answer in a concise and accurate manner. Your responses are short and to the point."},
 					{"role": "user", "content": f"{instruction}\n\n{input}"}
 				]
 		)
@@ -66,19 +66,20 @@ class AlpacaModifier:
 				button_save = gr.Button(value="Save")
 				button_save.click(self.save_callback,
 					inputs=[instruction_text, input_text, old_output_text, modified_output_text])
-				button_reset = gr.Button(value="Reset")
+				button_reset = gr.Button(value="Reset To Begining")
 				button_reset.click(self.reset_callback,
 					inputs=[instruction_text, input_text, old_output_text, modified_output_text], 
 					outputs=[instruction_text, input_text, old_output_text, modified_output_text])
 
 			with gr.Row():
-				skip_ahead = gr.Number(value=0, interactive=True)
-				button_skip = gr.Button(value="Jump To")
+				skip_ahead = gr.Number(label="Items to skip", value=0, interactive=True)
+				button_skip = gr.Button(value="Skip Ahead")
 				button_skip.click(self.skip_ahead,
 					inputs=[skip_ahead, instruction_text, input_text, old_output_text, modified_output_text], 
 					outputs=[instruction_text, input_text, old_output_text, modified_output_text])
+
 			with gr.Row():
-				gpt_api_key = gr.Textbox(placeholder="Enter your OpenAI API Key (optional)")
+				gpt_api_key = gr.Textbox(label="API key", placeholder="Enter your OpenAI API Key (optional)")
 				button_ask_gpt = gr.Button(value="Ask GPT")
 				button_ask_gpt.click(self.ask_gpt,
 					inputs=[instruction_text, input_text, old_output_text, modified_output_text, gpt_api_key], 
