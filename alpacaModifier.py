@@ -28,8 +28,8 @@ class AlpacaModifier:
 			return self.next_callback(instruction, input, old_output, old_output)
 		return instruction, input, old_output, modified_output
 		
-	def ask_gpt(self, instruction='', input='', old_output='', modified_output=''):
-		openai.api_key = ""
+	def ask_gpt(self, instruction='', input='', old_output='', modified_output='', key=''):
+		openai.api_key = key
 		completion = openai.ChatCompletion.create(
 			model="gpt-3.5-turbo",
 			messages=[
@@ -46,10 +46,17 @@ class AlpacaModifier:
 
 	def run(self):
 		with gr.Blocks() as demo:
-			instruction_text = gr.Textbox(lines=2, label="Instruction", value=self.instruction, interactive=True)
-			input_text = gr.Textbox(lines=1, label="Input", value=self.input, interactive=True)
-			old_output_text = gr.Textbox(lines=2, label="Old Output", value=self.old_output, interactive=False)
-			modified_output_text = gr.Textbox(lines=10, label="Modified Output", value=self.modified_output, interactive=True)
+			with gr.Column():
+				gr.Markdown("""
+                ## 🦙 Alpaca Dataset Editor
+                Cleaned Dataset: [Github](https://github.com/gururise/AlpacaDataCleaned) - [Hugging Face](https://huggingface.co/datasets/yahma/alpaca-cleaned)
+                
+                *To use GPT to generate answers, OpenAI API key is required*
+                """)
+				instruction_text = gr.Textbox(lines=2, label="Instruction", value=self.instruction, interactive=True)
+				input_text = gr.Textbox(lines=1, label="Input", value=self.input, interactive=True)
+				old_output_text = gr.Textbox(lines=2, label="Old Output", value=self.old_output, interactive=False)
+				modified_output_text = gr.Textbox(lines=10, label="Modified Output", value=self.modified_output, interactive=True)
 			
 			with gr.Row():
 				button_next = gr.Button(value="Next")
@@ -66,14 +73,15 @@ class AlpacaModifier:
 
 			with gr.Row():
 				skip_ahead = gr.Number(value=0, interactive=True)
-				button_skip = gr.Button(value="Skip Ahead")
+				button_skip = gr.Button(value="Jump To")
 				button_skip.click(self.skip_ahead,
 					inputs=[skip_ahead, instruction_text, input_text, old_output_text, modified_output_text], 
 					outputs=[instruction_text, input_text, old_output_text, modified_output_text])
 			with gr.Row():
+				gpt_api_key = gr.Textbox(placeholder="Enter your OpenAI API Key (optional)")
 				button_ask_gpt = gr.Button(value="Ask GPT")
 				button_ask_gpt.click(self.ask_gpt,
-					inputs=[instruction_text, input_text, old_output_text, modified_output_text], 
+					inputs=[instruction_text, input_text, old_output_text, modified_output_text, gpt_api_key], 
 					outputs=[instruction_text, input_text, old_output_text, modified_output_text])
 
 		demo.launch()
