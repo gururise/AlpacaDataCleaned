@@ -1,6 +1,8 @@
 import gradio as gr
 import openai
 
+OAI_PROMPT = "You are a helpful assistant. You answer in a concise and accurate manner. Your responses are short and to the point."
+
 class AlpacaModifier:
 	def __init__(self):
 		self.input = ''
@@ -30,11 +32,15 @@ class AlpacaModifier:
 		
 	def ask_gpt(self, instruction='', input='', old_output='', modified_output='', key=''):
 		openai.api_key = key
+
+		composite_content = f"{instruction}\n\n{input}" if input else instruction
+		print(f'Sending:\n{composite_content}')
+
 		completion = openai.ChatCompletion.create(
 			model="gpt-3.5-turbo",
 			messages=[
-					{"role": "system", "content": "You are a helpful assistant. You answer in a concise and accurate manner. Your responses are short and to the point."},
-					{"role": "user", "content": f"{instruction}\n\n{input}"}
+					{"role": "system", "content": OAI_PROMPT},
+					{"role": "user", "content": composite_content}
 				]
 		)
 		modified_output = completion["choices"][0]["message"]["content"]
