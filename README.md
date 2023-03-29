@@ -87,5 +87,8 @@ With over 52k entries, several issues still exist. Please help out by submitting
 ## Goals
 The primary goal of this project is to provide a cleaned and curated version of the Alpaca dataset that will improve the performance of natural language processing models trained on this data. By removing errors and inconsistencies, the goal is to improve performance of the fine-tuned llama models and reduce the likelihood of hallucinations.
 
+## License
+All the code and supporting tools are licensed under the Apache-2.0. The original and cleaned alpaca dataset is CC BY NC 4.0 (allowing only non-commercial use) and models trained using the dataset should not be used outside of research purposes.
+
 ## Acknowledgments
 The original version of the Alpaca dataset was sourced from tatsu-lab's [github repository](https://github.com/tatsu-lab/stanford_alpaca). We would like to thank the original creators of these datasets for making their data available to the public. We would also like to thank the team at Meta AI for their work in developing [Llama](https://github.com/facebookresearch/llama).
