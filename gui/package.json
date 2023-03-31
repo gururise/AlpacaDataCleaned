@@ -1,0 +1,14 @@
+{
+  "name": "alpaca-data-cleaned-gui",
+  "version": "0.0.1",
+  "description": "A simple web-based interface built for local use only, to help easily clean up the dataset.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "KenAKAFrosty",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
