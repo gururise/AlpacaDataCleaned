@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlpacaDataCleaned GUI Helper</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif, system-ui;
+        }
+
+        h1 {
+            font-family: inherit;
+            font-size: inherit;
+            font-weight: inherit;
+            width: -moz-fit-content;
+            width: fit-content;
+            color: rgb(84, 80, 80);
+            margin-bottom: 4px;
+            text-decoration: underline;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        div {
+            width: 98%;
+        }
+
+        button {
+            width: fit-content;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            background-color: #225282;
+            color: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 50px;
+            font-size: inherit;
+            padding: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div id="instruction">
+            <h1>Instruction</h1>
+            <textarea></textarea>
+        </div>
+        <div id="input">
+            <h1>Input</h1>
+            <textarea></textarea>
+        </div>
+        <div id="output">
+            <h1>Output</h1>
+            <textarea style="min-height: 200px;"></textarea>
+        </div>
+        <div id="controls" style="display: flex; justify-content: space-between;">
+            <button style="background-color: rgb(8, 110, 8)" id="save">Save</button>
+            <button style="background-color: rgb(183, 17, 17);" id="delete">Delete</button>
+        </div>
+    </main>
+</body>
+<script type="text/javascript">
+    function loadRandomEntry() {
+        fetch("/api/entry").then(raw => raw.json()).then(data => {
+            console.log(data.entry)
+            currentIndex = data.index
+            document.getElementById("instruction").children[1].value = data.entry.instruction
+            document.getElementById("input").children[1].value = data.entry.input
+            document.getElementById("output").children[1].value = data.entry.output
+        });
+    }
+
+
+    const textAreas = document.querySelectorAll("textarea");
+    textAreas.forEach(textArea => {
+        textArea.addEventListener("keydown", (event) => {
+            if (event.key === "Tab") {
+                event.preventDefault();
+                const start = textArea.selectionStart;
+                const end = textArea.selectionEnd;
+                textArea.value = textArea.value.substring(0, start) + "\t" + textArea.value.substring(end);
+                textArea.selectionStart = textArea.selectionEnd = start + 1;
+            }
+        })
+    })
+
+    document.getElementById("save").addEventListener('click', (event) => {
+        const instruction = document.getElementById("instruction").children[1].value
+        const input = document.getElementById("input").children[1].value
+        const output = document.getElementById("output").children[1].value
+        console.log(instruction, input, output)
+        fetch("/api/entry", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                index: currentIndex,
+                entry: {
+                    instruction,
+                    input,
+                    output
+                }
+            })
+        }).then(() => {
+            loadRandomEntry()
+        })
+    });
+
+    document.getElementById("delete").addEventListener('click', (event) => {
+        fetch("/api/entry", {
+            method: "DELETE",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                index: currentIndex
+            })
+        }).then(() => {
+            loadRandomEntry()
+        })
+    });
+
+    let currentIndex = -1;
+    window.addEventListener('load', loadRandomEntry)
+</script>
+
+</html>
