@@ -62,6 +62,7 @@
             width: 100%;
             min-height: 50px;
             font-size: inherit;
+            padding: 4px;
         }
     </style>
 </head>
@@ -91,9 +92,9 @@
         fetch("/api/entry").then(raw => raw.json()).then(data => {
             console.log(data.entry)
             currentIndex = data.index
-            document.getElementById("instruction").children[1].innerHTML = data.entry.instruction
-            document.getElementById("input").children[1].innerHTML = data.entry.input
-            document.getElementById("output").children[1].innerHTML = data.entry.output
+            document.getElementById("instruction").children[1].value = data.entry.instruction
+            document.getElementById("input").children[1].value = data.entry.input
+            document.getElementById("output").children[1].value = data.entry.output
         });
     }
 
