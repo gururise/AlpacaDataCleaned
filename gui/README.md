@@ -5,6 +5,10 @@ In your command line, if you're at the root of the project, first
 
 `cd gui`
 
+The first time, run this to install the dependencies
+
+`npm i`
+
 Then run
 
 `node index.js`
