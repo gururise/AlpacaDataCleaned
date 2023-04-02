@@ -1,0 +1,6 @@
+appdirs
+loralib
+bitsandbytes
+datasets
+git+https://github.com/huggingface/peft.git
+git+https://github.com/huggingface/transformers.git
