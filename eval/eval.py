@@ -127,9 +127,9 @@ def main():
     # Create the parser and add arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', '--base-model', default='decapoda-research/llama-7b-hf', required=True, type=str, help="Choose the base model")
-    parser.add_argument('--lora-weights', type=str, help="Choose the lora weights (optional)")
-    parser.add_argument('--datasets', default='squadmini', choices=['wikitext','squadmini','squad'], help="Choose Evaluation Dataset. [default = squadmini]")
-    parser.add_argument('--use-8bit', action="store_true", default=False, help="Use 8-bit quant")
+    parser.add_argument('-l', '--lora-weights', type=str, help="Choose the lora weights (optional)")
+    parser.add_argument('-d', '--datasets', default='squadmini', choices=['wikitext','squadmini','squad'], help="Choose Evaluation Dataset. [default = squadmini]")
+    parser.add_argument('-q', '--use-8bit', action="store_true", default=False, help="Use 8-bit quant")
     args = parser.parse_args()
     
     tokenizer = LlamaTokenizer.from_pretrained(args.base_model)
