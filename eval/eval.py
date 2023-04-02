@@ -197,7 +197,7 @@ def main():
         ds = load_dataset("wikitext","wikitext-2-raw-v1", split="test")
         encodings = tokenizer("\n\n".join(ds["text"]), return_tensors="pt")
         ppl = calc_perplexity(encodings, model,1024)
-        print(f"wikitext perplexity: {round(ppl,3)}")
+        print(f"wikitext perplexity: {ppl}")
     else:
         print("Unsupported Dataset")
 
