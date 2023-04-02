@@ -25,13 +25,12 @@ options:
 `eval.py --base-model decapoda-research/llama-7b-hf --lora-weights samwit/alpaca7B-lora --datasets squadmini`
 
 ### Benchmark Comparison
-I compared two different alpaca 7b models on the Squad Dataset:
+I compared some different alpaca 7b models on the Squad Dataset:
 
 dataset | model | Squad(Mini) F1 
 ------- | ----- | ---------
 Original Alpaca | samwit/alpaca7B-lora | 34.63
-Cleaned Alpaca  | tloen/alpaca-lora-7b | 49.64
-
-The cleaned alpaca trained model was using the cleaned dataset snapshot dated March 27, 2023.
+Cleaned Alpaca (Mar 27)  | tloen/alpaca-lora-7b | 49.64
+Cleaned Alpaca (Mar 31)  | yahma/alpaca-7b-lora | 55.229
 
 At least on the surface, it appears the cleaning & curation we've been doing has helped significantly.

@@ -2,7 +2,6 @@ import os
 import sys
 import argparse
 
-#import fire
 import itertools
 import torch
 
@@ -100,7 +99,19 @@ def calc_f1(model, tokenizer, dataset, dataset_size, max_tokens):
         output = evaluate(prompt=prompt,tokenizer=tokenizer,model=model, max_new_tokens=max_tokens)
         prediction = prompter.get_response(output)
         predictions = [{'prediction_text': prediction,'id': example['id']}]
-        references = [{'answers': {'answer_start': example['answers']['answer_start'], 'text': example['answers']['text']}, 'id': example['id']}]
+        
+        # modify ground truth to accept text and numeric single-digits
+        answers_text = example['answers']['text'].copy()
+        answers_start = example['answers']['answer_start'].copy()
+        for i in range(len(example['answers']['text'])):
+            val = digit_or_text(example['answers']['text'][i])
+            if val:
+                answers_text.append(val)
+                answers_start.append(example['answers']['answer_start'][i])
+                
+        #references = [{'answers': {'answer_start': example['answers']['answer_start'], 'text': example['answers']['text']}, 'id': example['id']}]
+        
+        references = [{'answers': {'answer_start': answers_start, 'text': answers_text}, 'id': example['id']}]
         results = squad_metric.compute(predictions=predictions, references=references)
 
         #f1_score = compute_f1(prediction, ground_truth)
@@ -123,10 +134,57 @@ def compute_f1(prediction, ground_truth):
     f1 = 2 * (precision * recall) / (precision + recall)
     return f1
 
+def digit_or_text(input):
+    # Define a dictionary mapping digits and text representations to their corresponding values
+    digit_dict = {
+        '0': 'zero',
+        '1': 'one',
+        '2': 'two',
+        '3': 'three',
+        '4': 'four',
+        '5': 'five',
+        '6': 'six',
+        '7': 'seven',
+        '8': 'eight',
+        '9': 'nine',
+        'zero': '0',
+        'one': '1',
+        'two': '2',
+        'three': '3',
+        'four': '4',
+        'five': '5',
+        'six': '6',
+        'seven': '7',
+        'eight': '8',
+        'nine': '9',
+        'three hundred sixty': '360',
+        # common fractions
+        '1/4': 'one quarter',
+        '1/2': 'one half',
+        '1/3': 'one third',
+        '2/3': 'two thirds',
+        '3/4': 'three quarters',
+        '4/5': 'four fifths',
+        'one quarter': '1/4',
+        'one half': '1/2',
+        'one third': '1/3',
+        'two thirds': '2/3',
+        'three quarters': '3/4',
+        'four fifths': '4/5'
+    }
+    
+    # Check if the input is a single digit number (either as a string)
+    if input in digit_dict:
+        return digit_dict[input]
+    
+    # If the input is not a single digit number, return None
+    else:
+        return None
+
 def main():
     # Create the parser and add arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('-b', '--base-model', default='decapoda-research/llama-7b-hf', required=True, type=str, help="Choose the base model")
+    parser.add_argument('-b', '--base-model', required=True, default='decapoda-research/llama-7b-hf', type=str, help="Choose the base model")
     parser.add_argument('-l', '--lora-weights', type=str, help="Choose the lora weights (optional)")
     parser.add_argument('-d', '--datasets', default='squadmini', choices=['wikitext','squadmini','squad'], help="Choose Evaluation Dataset. [default = squadmini]")
     parser.add_argument('-q', '--use-8bit', action="store_true", default=False, help="Use 8-bit quant")
