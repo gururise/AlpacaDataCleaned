@@ -82,13 +82,12 @@ def calc_perplexity(encodings, model, max_length):
     
     return ppl
 
-def calc_f1(model, tokenizer, dataset, max_tokens):
+def calc_f1(model, tokenizer, dataset, dataset_size, max_tokens):
     # Evaluate the model on the SQuAD dataset
     prompter = Prompter('alpaca')
     squad_metric = load("squad")
     
     f1_scores = []
-    dataset_size = len(dataset)
     print (f"Dataset Size: {dataset_size}")
     count = 1
     
@@ -127,9 +126,9 @@ def compute_f1(prediction, ground_truth):
 def main():
     # Create the parser and add arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('--base-model', default='decapoda-research/llama-7b-hf', type=str, help="Choose the base model")
-    parser.add_argument('--lora-weights', type=str, help="Choose the lora weights")
-    parser.add_argument('--datasets', default='squadmini', choices=['wikitext','squadmini','squad'], help="Choose Evaluation Dataset")
+    parser.add_argument('-b', '--base-model', default='decapoda-research/llama-7b-hf', required=True, type=str, help="Choose the base model")
+    parser.add_argument('--lora-weights', type=str, help="Choose the lora weights (optional)")
+    parser.add_argument('--datasets', default='squadmini', choices=['wikitext','squadmini','squad'], help="Choose Evaluation Dataset. [default = squadmini]")
     parser.add_argument('--use-8bit', action="store_true", default=False, help="Use 8-bit quant")
     args = parser.parse_args()
     
@@ -186,12 +185,13 @@ def main():
         
     if args.datasets == 'squad':
         ds = load_dataset("squad", split="validation")
-        f1 = calc_f1(model,tokenizer, ds, 1024)
+        f1 = calc_f1(model,tokenizer, ds, len(ds), 1024)
         print(f"Squad F1 Score: {round(f1,3)}")
     elif args.datasets == 'squadmini':
         ds = load_dataset("squad", split="validation")
+        ds_size = len(ds)//10
         ds = itertools.islice(ds, 0, None, 10)
-        f1 = calc_f1(model,tokenizer, ds, 1024)
+        f1 = calc_f1(model,tokenizer, ds, ds_size, 1024)
         print(f"Squad 'Mini' F1 Score: {round(f1,3)}")        
     elif args.datasets == 'wikitext':
         ds = load_dataset("wikitext","wikitext-2-raw-v1", split="test")
