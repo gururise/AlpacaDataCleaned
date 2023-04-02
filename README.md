@@ -10,7 +10,7 @@ The quality of the dataset plays a crucial role in determining the performance o
 Therefore, it is possible that with better data, we could improve the performance of the models more than what would be gained by simply increasing model size.
 
 ## Benchmark Results
-Using the [benchmarking tool](https://github.com/gururise/AlpacaDataCleaned/tree/main/eval), we compare two LORA models, one trained on the original alpaca dataset and another trained on the cleaned dataset (snapshot Mar 27).
+Using the [benchmarking tool](https://github.com/gururise/AlpacaDataCleaned/tree/main/eval), we compare LORA models trained on different datasets.
 
 dataset | model | Squad(Mini) F1 
 ------- | ----- | ---------
