@@ -27,6 +27,7 @@ def evaluate(
     tokenizer,
     model,
     prompt,
+    max_new_tokens=32,
     **kwargs,
 ):
     inputs = tokenizer(prompt, return_tensors="pt")
@@ -45,7 +46,7 @@ def evaluate(
             generation_config=generation_config,
             return_dict_in_generate=True,
             output_scores=True,
-            max_new_tokens=32,
+            max_new_tokens=max_new_tokens,
         )
     s = generation_output.sequences[0]
     output = tokenizer.decode(s)
@@ -142,13 +143,13 @@ def calc_f1(model, tokenizer, dataset, dataset_size, max_tokens):
     
     for example in dataset:
         context = example['context']
-        question = "Generate a short, precise answer to this Question in 1 to 5 words: " + example['question']
+        question = "Generate a very short, precise answer to this Question:\n" + example['question']
         prompt = prompter.generate_prompt(question, context)
         ground_truth = example['answers']['text'][0]
 
         output = evaluate(prompt=prompt,tokenizer=tokenizer,model=model, max_new_tokens=max_tokens)
         prediction = prompter.get_response(output)
-        predictions = [{'prediction_text': prediction,'id': example['id']}]
+        
         
         # modify ground truth to accept text and numeric single-digits
         answers_text = example['answers']['text'].copy()
@@ -160,7 +161,16 @@ def calc_f1(model, tokenizer, dataset, dataset_size, max_tokens):
                 answers_start.append(example['answers']['answer_start'][i])
                 
         #references = [{'answers': {'answer_start': example['answers']['answer_start'], 'text': example['answers']['text']}, 'id': example['id']}]
-        
+
+        # check if answer is contained within prediction
+        for answer in answers_text:
+            # check if the lowercase version of the item is in the lowercase version of the string
+            if answer.lower() in prediction.lower():
+                prediction = answer
+                break
+            
+        predictions = [{'prediction_text': prediction,'id': example['id']}]
+
         references = [{'answers': {'answer_start': answers_start, 'text': answers_text}, 'id': example['id']}]
         results = squad_metric.compute(predictions=predictions, references=references)
 
@@ -294,13 +304,13 @@ def main():
         
     if args.datasets == 'squad':
         ds = load_dataset("squad", split="validation")
-        f1 = calc_f1(model,tokenizer, ds, len(ds), 1024)
+        f1 = calc_f1(model,tokenizer, ds, len(ds), 32)
         print(f"Squad F1 Score: {round(f1,3)}")
     elif args.datasets == 'squadmini':
         ds = load_dataset("squad", split="validation")
         ds_size = len(ds)//10
         ds = itertools.islice(ds, 0, None, 10)
-        f1 = calc_f1(model,tokenizer, ds, ds_size, 1024)
+        f1 = calc_f1(model,tokenizer, ds, ds_size, 32)
         print(f"Squad 'Mini' F1 Score: {round(f1,3)}")        
     elif args.datasets == 'wikitext':
         ds = load_dataset("wikitext","wikitext-2-raw-v1", split="test")
@@ -309,7 +319,7 @@ def main():
         print(f"wikitext perplexity: {ppl}")
     elif args.datasets == 'piqa':
         ds = load_dataset("piqa", split="validation")
-        precision = supervised(model,tokenizer, ds, len(ds), 1024)
+        precision = supervised(model,tokenizer, ds, len(ds), 32)
         print(f"Piqa accuracy: {round(precision,3)}")
     else:
         print("Unsupported Dataset")
