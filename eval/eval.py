@@ -1,4 +1,4 @@
-import os
+import re
 import sys
 import argparse
 
@@ -80,6 +80,56 @@ def calc_perplexity(encodings, model, max_length):
     ppl = torch.exp(torch.stack(nlls).mean())
     
     return ppl
+
+def supervised(model, tokenizer, dataset, dataset_size, max_tokens):
+    # Evaluate the model on the dataset
+    prompter = Prompter('piqa')
+    #precision_metric = load("precision")
+    
+    print (f"Dataset Size: {dataset_size}")
+    count = 1
+
+    tp = 0
+    precision = 0
+    for example in dataset:
+        question = f"""
+        Given two solutions, return the most sensible solution that achieves the goal.
+        
+        ### Goal:
+        {example['goal']}
+        
+        ### Solutions:
+        Given the two solutions:
+        1. {example['sol1']}
+        2. {example['sol2']}
+        Return the solution that makes the most sense and solves the goal. 
+        """
+        prompt = prompter.generate_prompt(question)
+
+        output = evaluate(prompt=prompt,tokenizer=tokenizer,model=model, max_new_tokens=max_tokens)
+        prediction = prompter.get_response(output)
+
+        match = re.search(r'\d+', prediction)
+        try:
+            if match:
+                idx = match.start()
+                result = int(re.split("[:. ]+", prediction[idx:])[0])
+            else:
+                result = -1
+        except:
+            result = -1
+
+        if result == int(example['label'])+1:
+            tp += 1
+            
+        precision = round(tp / count,3)
+        
+        print(f"\n({count}/{dataset_size}):\nGOAL: {example['goal']}\n  1. {example['sol1']}\n  2: {example['sol2']}\nPrediction: [{result}] - Ground Truth: [{int(example['label'])+1}] - acc: {round(precision,3)}")
+        if result == -1:
+            print(f'** bad prediction: {prediction.strip()}')
+        count+=1
+    
+    return precision
 
 def calc_f1(model, tokenizer, dataset, dataset_size, max_tokens):
     # Evaluate the model on the SQuAD dataset
@@ -186,7 +236,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-b', '--base-model', required=True, default='decapoda-research/llama-7b-hf', type=str, help="Choose the base model")
     parser.add_argument('-l', '--lora-weights', type=str, help="Choose the lora weights (optional)")
-    parser.add_argument('-d', '--datasets', default='squadmini', choices=['wikitext','squadmini','squad'], help="Choose Evaluation Dataset. [default = squadmini]")
+    parser.add_argument('-d', '--datasets', default='squadmini', choices=['wikitext','squadmini','squad','piqa'], help="Choose Evaluation Dataset. [default = squadmini]")
     parser.add_argument('-q', '--use-8bit', action="store_true", default=False, help="Use 8-bit quant")
     args = parser.parse_args()
     
@@ -256,6 +306,10 @@ def main():
         encodings = tokenizer("\n\n".join(ds["text"]), return_tensors="pt")
         ppl = calc_perplexity(encodings, model,1024)
         print(f"wikitext perplexity: {ppl}")
+    elif args.datasets == 'piqa':
+        ds = load_dataset("piqa", split="validation")
+        precision = supervised(model,tokenizer, ds, len(ds), 1024)
+        print(f"Piqa precision: {round(precision,3)}")
     else:
         print("Unsupported Dataset")
 
