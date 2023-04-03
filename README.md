@@ -12,12 +12,12 @@ Therefore, it is possible that with better data, we could improve the performanc
 ## Benchmark Results
 Using the [benchmarking tool](https://github.com/gururise/AlpacaDataCleaned/tree/main/eval), we compare LORA models trained on various datasets.
 
-dataset | Hugging Face | parameters | SquadMini (f1) | Piqa (acc) 
+Dataset | Hugging Face | parameters | SquadMini (f1) | Piqa (acc) 
 ------- | ----- | ----- | ----- | -----
-Original Alpaca | samwit/alpaca7B-lora | 7b | 74.271 | 50.5
-Cleaned Alpaca (Mar 26)  | tloen/alpaca-lora-7b | 7b | 75.629 | 54.0
-Cleaned Alpaca (Mar 31)  | yahma/alpaca-7b-lora | 7b | 76.388 | 52.6
-GPT4All  | nomic-ai/gpt4all-lora | 7b | 72.643 | 49.5
+**Original Alpaca** | samwit/alpaca7B-lora | 7b | 74.271 | 50.5
+**Cleaned Alpaca (Mar 26)**  | tloen/alpaca-lora-7b | 7b | 75.629 | **54.0**
+**Cleaned Alpaca (Mar 31)**  | yahma/alpaca-7b-lora | 7b | **76.388** | 52.6
+**GPT4All**  | nomic-ai/gpt4all-lora | 7b | 72.643 | 49.5
 
 We also ran the Hallucination Trivia Test for Large Language Models ([HALTT4LLM](https://github.com/manyoso/haltt4llm)) 
 | Model Name            | Truthful QA | HQ Trivia | Fake Questions | NOTA Questions |
