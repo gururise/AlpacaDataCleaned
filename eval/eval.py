@@ -83,7 +83,7 @@ def calc_perplexity(encodings, model, max_length):
 
 def supervised(model, tokenizer, dataset, dataset_size, max_tokens):
     # Evaluate the model on the dataset
-    prompter = Prompter('piqa')
+    prompter = Prompter('piqa',False)
     #precision_metric = load("precision")
     
     print (f"Dataset Size: {dataset_size}")
@@ -113,7 +113,7 @@ def supervised(model, tokenizer, dataset, dataset_size, max_tokens):
         try:
             if match:
                 idx = match.start()
-                result = int(re.split("[:. ]+", prediction[idx:])[0])
+                result = int(re.split("[:. \n]+", prediction[idx:])[0])
             else:
                 result = -1
         except:
@@ -133,7 +133,7 @@ def supervised(model, tokenizer, dataset, dataset_size, max_tokens):
 
 def calc_f1(model, tokenizer, dataset, dataset_size, max_tokens):
     # Evaluate the model on the SQuAD dataset
-    prompter = Prompter('alpaca')
+    prompter = Prompter('squad')
     squad_metric = load("squad")
     
     f1_scores = []
@@ -216,6 +216,7 @@ def digit_or_text(input):
         '3/4': 'three quarters',
         '4/5': 'four fifths',
         'one quarter': '1/4',
+        'half': '50%',
         'one half': '1/2',
         'one third': '1/3',
         'two thirds': '2/3',
@@ -224,8 +225,8 @@ def digit_or_text(input):
     }
     
     # Check if the input is a single digit number (either as a string)
-    if input in digit_dict:
-        return digit_dict[input]
+    if input.lower() in digit_dict:
+        return digit_dict[input.lower()]
     
     # If the input is not a single digit number, return None
     else:
@@ -309,7 +310,7 @@ def main():
     elif args.datasets == 'piqa':
         ds = load_dataset("piqa", split="validation")
         precision = supervised(model,tokenizer, ds, len(ds), 1024)
-        print(f"Piqa precision: {round(precision,3)}")
+        print(f"Piqa accuracy: {round(precision,3)}")
     else:
         print("Unsupported Dataset")
 
