@@ -4,6 +4,7 @@ import argparse
 
 import itertools
 import torch
+import Levenshtein
 
 from tqdm import tqdm
 from peft import PeftModel
@@ -38,8 +39,10 @@ def evaluate(
         top_p=0.8,
         top_k=40,
         num_beams=1,
+        repetition_penalty=1.2,
         **kwargs,
     )
+
     with torch.no_grad():
         generation_output = model.generate(
             input_ids=input_ids,
@@ -93,44 +96,43 @@ def supervised(model, tokenizer, dataset, dataset_size, max_tokens):
     tp = 0
     precision = 0
     for example in dataset:
-        question = f"""
-        Given two solutions, return the most sensible solution that achieves the goal.
-        
-        ### Goal:
-        {example['goal']}
-        
-        ### Solutions:
-        Given the two solutions:
-        1. {example['sol1']}
-        2. {example['sol2']}
-        Return the solution that makes the most sense and solves the goal. 
-        """
-        prompt = prompter.generate_prompt(question)
+        question = f"""Goal: {example['goal']}
 
+Solutions:
+1) {example['sol1']}
+2) {example['sol2']}
+Respond "1" or "2", choose the most appropriate solution to reach the goal."""
+        prompt = prompter.generate_prompt(question)
+        #print(prompt+"\n\n")
         output = evaluate(prompt=prompt,tokenizer=tokenizer,model=model, max_new_tokens=max_tokens)
         prediction = prompter.get_response(output)
-
-        match = re.search(r'\d+', prediction)
-        try:
-            if match:
-                idx = match.start()
-                result = int(re.split("[:. \n]+", prediction[idx:])[0])
-            else:
-                result = -1
-        except:
-            result = -1
+    
+        match = re.search(r"(\d)[.), ]|[#](\d)|[\'\"](\d)[\'\"]", prediction)
+        if match:
+            result = int("".join([group for group in match.groups() if group is not None]))
+        elif "first choice" in prediction or "first option" in prediction or example['sol1'] in prediction:
+            result = 1
+        elif "second choice" in prediction or "second option" in prediction or example['sol2'] in prediction:
+            result = 2
+        else:
+            result = closest_match(prediction, [example['sol1'], example['sol2']])
 
         if result == int(example['label'])+1:
             tp += 1
             
         precision = round(tp / count,3)
         
-        print(f"\n({count}/{dataset_size}):\nGOAL: {example['goal']}\n  1. {example['sol1']}\n  2: {example['sol2']}\nPrediction: [{result}] - Ground Truth: [{int(example['label'])+1}] - acc: {round(precision,3)}")
+        print(f"\n({count}/{dataset_size}):\nGOAL: {example['goal']}\n  1. {example['sol1']}\n  2. {example['sol2']}\nPrediction: [{result}] - Ground Truth: [{int(example['label'])+1}] - acc: {round(precision,3)}")
+        print(f"PRED --> {prediction}")
         if result == -1:
             print(f'** bad prediction: {prediction.strip()}')
         count+=1
     
     return precision
+
+def closest_match(target, strings):
+    distances = [Levenshtein.distance(target, s) for s in strings]
+    return distances.index(min(distances))+1
 
 def calc_f1(model, tokenizer, dataset, dataset_size, max_tokens):
     # Evaluate the model on the SQuAD dataset
@@ -264,6 +266,7 @@ def main():
                 model,
                 args.lora_weights,
                 torch_dtype=torch.float16,
+                device_map={'': 0},
             )
     elif device == "mps":
         model = LlamaForCausalLM.from_pretrained(
@@ -290,9 +293,12 @@ def main():
             )
 
     # unwind broken decapoda-research config
+    # eos_token_ids = [tokenizer.eos_token_id] if tokenizer.eos_token_id is not None else []
+    # if eos_token is not None:
+    #     eos_token_ids.append(int(encode(eos_token)[0][-1]))
     model.config.pad_token_id = tokenizer.pad_token_id = 0  # unk
     model.config.bos_token_id = 1
-    model.config.eos_token_id = 2
+    model.config.eos_token_id = tokenizer.eos_token_id
     #model.seqlen = 2048
 
     if not args.use_8bit:
