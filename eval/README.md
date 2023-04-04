@@ -28,11 +28,13 @@ options:
 ### Benchmark Comparison
 Comparison of models trained on various datasets
 
-dataset | Hugging Face | parameters | SquadMini (f1) | Piqa (acc) 
+**NOTE:** The Piqa tests are not working correctly right now. Do not rely on the piqa scores
+
+Dataset | Model | parameters | SquadMini (f1) | Piqa (acc) 
 ------- | ----- | ----- | ----- | -----
-Original Alpaca | samwit/alpaca7B-lora | 7b | 74.271 | 50.5
-Cleaned Alpaca (Mar 26)  | tloen/alpaca-lora-7b | 7b | 75.629 | 54.0
-Cleaned Alpaca (Mar 31)  | yahma/alpaca-7b-lora | 7b | 76.388 | 52.6
-GPT4All  | nomic-ai/gpt4all-lora | 7b | 72.643 | 49.5
+**Original Alpaca** | samwit/alpaca7B-lora | 7b | 74.271 | ~~50.5~~
+**Cleaned Alpaca** (Mar 26)  | tloen/alpaca-lora-7b | 7b | 75.629 | ~~54.0~~
+**Cleaned Alpaca** (Apr 2) 8bit | yahma/alpaca-13b-lora | 13b | **77.765** | -
+**GPT4All**  | nomic-ai/gpt4all-lora | 7b | 72.643 | -
 
 At least on the surface, it appears the cleaning & curation has helped.
