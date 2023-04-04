@@ -85,7 +85,7 @@ def calc_perplexity(encodings, model, max_length):
     
     return ppl
 
-def supervised(model, tokenizer, dataset, dataset_size, max_tokens):
+def piqa(model, tokenizer, dataset, dataset_size, max_tokens):
     # Evaluate the model on the dataset
     prompter = Prompter('piqa',False)
     #precision_metric = load("precision")
@@ -96,18 +96,21 @@ def supervised(model, tokenizer, dataset, dataset_size, max_tokens):
     tp = 0
     precision = 0
     for example in dataset:
-        question = f"""Goal: {example['goal']}
+        question = f"""You will be presented with an task and two possible solutions. Your goal is to select the solution that best achieves the given task.
+
+Task: {example['goal']}
 
 Solutions:
-1) {example['sol1']}
-2) {example['sol2']}
-Respond "1" or "2", choose the most appropriate solution to reach the goal."""
+  1. {example['sol1']}
+  2. {example['sol2']}
+  
+Please respond with either "1" or "2" to indicate the most appropriate solution."""
         prompt = prompter.generate_prompt(question)
         #print(prompt+"\n\n")
         output = evaluate(prompt=prompt,tokenizer=tokenizer,model=model, max_new_tokens=max_tokens)
         prediction = prompter.get_response(output)
     
-        match = re.search(r"(\d)[.), ]|[#](\d)|[\'\"](\d)[\'\"]", prediction)
+        match = re.search(r"\b(\d)\b|(\d)[.), ]|[#](\d)|[\'\"](\d)[\'\"]", prediction)
         if match:
             result = int("".join([group for group in match.groups() if group is not None]))
         elif "first choice" in prediction or "first option" in prediction or example['sol1'] in prediction:
@@ -325,7 +328,7 @@ def main():
         print(f"wikitext perplexity: {ppl}")
     elif args.datasets == 'piqa':
         ds = load_dataset("piqa", split="validation")
-        precision = supervised(model,tokenizer, ds, len(ds), 32)
+        precision = piqa(model,tokenizer, ds, len(ds), 32)
         print(f"Piqa accuracy: {round(precision,3)}")
     else:
         print("Unsupported Dataset")
