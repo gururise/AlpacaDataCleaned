@@ -96,7 +96,7 @@ def piqa(model, tokenizer, dataset, dataset_size, max_tokens):
     tp = 0
     precision = 0
     for example in dataset:
-        question = f"""You will be presented with an task and two possible solutions. Your goal is to select the solution that best achieves the given task.
+        question = f"""You will be presented with a task and two possible solutions. Your goal is to select the solution that best achieves the given task.
 
 Task: {example['goal']}
 
