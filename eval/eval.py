@@ -110,7 +110,7 @@ Please respond with either "1" or "2" to indicate the most appropriate solution.
         output = evaluate(prompt=prompt,tokenizer=tokenizer,model=model, max_new_tokens=max_tokens)
         prediction = prompter.get_response(output)
     
-        match = re.search(r"\b(\d)\b|(\d)[.), ]|[#](\d)|[\'\"](\d)[\'\"]", prediction)
+        match = re.search(r"\b([1-2])(?![\%\!\@\~\#\*])\b|[#]([1-2])|[\'\"]([1-2])[\'\"]", prediction)
         if match:
             result = int("".join([group for group in match.groups() if group is not None]))
         elif "first choice" in prediction or "first option" in prediction or example['sol1'] in prediction:
@@ -329,7 +329,7 @@ def main():
     elif args.datasets == 'piqa':
         ds = load_dataset("piqa", split="validation")
         precision = piqa(model,tokenizer, ds, len(ds), 32)
-        print(f"Piqa accuracy: {round(precision,3)}")
+        print(f"Piqa accuracy: {round(precision,4)}")
     else:
         print("Unsupported Dataset")
 
