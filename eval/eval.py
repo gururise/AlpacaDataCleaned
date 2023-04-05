@@ -109,15 +109,21 @@ Please respond with either "1" or "2" to indicate the most appropriate solution.
         #print(prompt+"\n\n")
         output = evaluate(prompt=prompt,tokenizer=tokenizer,model=model, max_new_tokens=max_tokens)
         prediction = prompter.get_response(output)
+        
+        # get index of model solution in predicted output so we can address issues such as:
+        # "the first solution blah blah is better than the second solution" 
+        first_index = min([999 if x == -1 else x for x in [prediction.find("first option"),prediction.find("first solution"),prediction.find("first choice")]])
+        second_index = min([999 if x == -1 else x for x in [prediction.find("second option"),prediction.find("second solution"),prediction.find("second choice")]])
     
         match = re.search(r"\b([1-2])(?![\%\!\@\~\#\*])\b|[#]([1-2])|[\'\"]([1-2])[\'\"]", prediction)
         if match:
             result = int("".join([group for group in match.groups() if group is not None]))
-        elif "first choice" in prediction or "first option" in prediction or example['sol1'] in prediction:
+        elif (first_index < second_index) and (first_index < 999):
             result = 1
-        elif "second choice" in prediction or "second option" in prediction or example['sol2'] in prediction:
+        elif (second_index < first_index) and (second_index < 999):
             result = 2
         else:
+            # if we can't deduce the soln the model selected, we use Levenshtein dist to try and compare model output to the two solutions.
             result = closest_match(prediction, [example['sol1'], example['sol2']])
 
         if result == int(example['label'])+1:
@@ -126,13 +132,12 @@ Please respond with either "1" or "2" to indicate the most appropriate solution.
         precision = round(tp / count,3)
         
         print(f"\n({count}/{dataset_size}):\nGOAL: {example['goal']}\n  1. {example['sol1']}\n  2. {example['sol2']}\nPrediction: [{result}] - Ground Truth: [{int(example['label'])+1}] - acc: {round(precision,3)}")
-        print(f"PRED --> {prediction}")
-        if result == -1:
-            print(f'** bad prediction: {prediction.strip()}')
+        print(f"PREDICTION --> {prediction}")
         count+=1
     
     return precision
 
+    
 def closest_match(target, strings):
     distances = [Levenshtein.distance(target, s) for s in strings]
     return distances.index(min(distances))+1
