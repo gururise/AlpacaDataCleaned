@@ -10,17 +10,13 @@ The quality of the dataset plays a crucial role in determining the performance o
 Therefore, it is possible that with better data, we could improve the performance of the models more than what would be gained by simply increasing model size.
 
 ## Benchmark Results
-Using the [benchmarking tool](https://github.com/gururise/AlpacaDataCleaned/tree/main/eval), we compare LORA models trained on various datasets.
+Using EleutherAIs [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness), we compare LORA models trained on various datasets.
 
-Dataset | Model | parameters | SquadMini (f1) | Piqa (acc) 
-------- | ----- | ----- | ----- | -----
-**Original Alpaca** | samwit/alpaca7B-lora | 7b | 74.271 | -
-**Cleaned Alpaca** (Mar 26)  | tloen/alpaca-lora-7b | 7b | 75.629 | -
-**Cleaned Alpaca** (Apr 2)  | yahma/alpaca-7b-lora | 7b | 76.388 | -
-**Cleaned Alpaca** (Apr 2) 8bit | yahma/alpaca-13b-lora | 13b | **77.765** | -
-**GPT4All**  | nomic-ai/gpt4all-lora | 7b | 72.643 | -
-
-**Note:** Piqa results removed due to unresolved issues. Do not rely on Piqa results just yet.
+Dataset | Model | parameters | WikiText (ppl) | MNLI (acc) | Piqa (acc norm) 
+------- | ----- | ----- | ----- | ----- | -----
+**Original Alpaca** | samwit/alpaca7B-lora | 7b (lora) | 9.5396 | 38.33 | 78.51
+**Cleaned Alpaca** (Mar 26)  | tloen/alpaca-lora-7b | 7b (lora) | 9.4885 | 51.14 | 79.33
+**GPT4All**  | nomic-ai/gpt4all-lora | 7b (lora) | 10.09 | 38.97 | 78.40
 
 We also ran the Hallucination Trivia Test for Large Language Models ([HALTT4LLM](https://github.com/manyoso/haltt4llm)) 
 | Model Name            | Truthful QA | HQ Trivia | Fake Questions | NOTA Questions |
