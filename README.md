@@ -10,7 +10,7 @@ The quality of the dataset plays a crucial role in determining the performance o
 Therefore, it is possible that with better data, we could improve the performance of the models more than what would be gained by simply increasing model size.
 
 ## Benchmark Results
-Using EleutherAIs [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness), we compare LORA models trained on various datasets.
+Using EleutherAIs [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness), we compare LORA models fine-tuned on various datasets.
 
 Dataset | Model | parameters | WikiText (ppl) | MNLI (acc) | Piqa (acc norm) 
 ------- | ----- | ----- | ----- | ----- | -----
