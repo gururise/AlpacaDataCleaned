@@ -15,7 +15,7 @@ Using EleutherAIs [lm-evaluation-harness](https://github.com/EleutherAI/lm-evalu
 Dataset | Model | parameters | WikiText (ppl) | MNLI (acc) | Piqa (acc norm) 
 ------- | ----- | ----- | ----- | ----- | -----
 **Original Alpaca** | samwit/alpaca7B-lora | 7b (lora) | 9.5396 | 38.33 | 78.51
-**Cleaned Alpaca** (Mar 26)  | tloen/alpaca-lora-7b | 7b (lora) | 9.4885 | 51.14 | 79.33
+**Cleaned Alpaca** (Mar 26)  | tloen/alpaca-lora-7b | 7b (lora) | **9.4885** | **51.6** | **79.33**
 **GPT4All**  | nomic-ai/gpt4all-lora | 7b (lora) | 10.09 | 38.97 | 78.40
 
 We also ran the Hallucination Trivia Test for Large Language Models ([HALTT4LLM](https://github.com/manyoso/haltt4llm)) 
