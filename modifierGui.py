@@ -12,19 +12,6 @@ def swap_rows(df, i1, i2):
 
 class MyAlpacaModifier(AlpacaModifier):
 	index = 0
-	def fill_values(self, instruction='', input='', output='', modified_instruction='', modified_input='', modified_output=''):
-		self.instruction = instruction
-		self.input = input
-		self.output = output
-		self.modified_output = modified_output
-
-	def save_prev_item(self):
-		if self.prev_item != None:
-			self.prev_item['instruction'] = self.instruction
-			self.prev_item['input'] = self.input
-			self.prev_item['output'] = self.modified_output
-			print(f'saving as:\n{self.prev_item}')
-			self.prev_item = None
 	
 	def clamp(self, n, minn, maxn):
 		return max(min(maxn, n), minn)
@@ -56,25 +43,38 @@ class MyAlpacaModifier(AlpacaModifier):
 		if self.index > len(self.data):
 			self.index = 0
 		return self.get_index(self.index)
-		
-	def save_callback(self, instruction='', input='', old_output='', modified_output=''):
-		self.fill_values(instruction, input, old_output, modified_output)
-		self.save_prev_item()
-		
-		print(f"Saving modified data to {SAVE_FILE}...", end = '')
+
+	def find_next_bad(self):
+		for i in range(self.index+1,len(self.data)-1):
+			text = f"""INSTRUCTION:\n{self.data[i]["instruction"]}\nINPUT:\n{self.data[i]["input"]}\nOUTPUT:\n{self.data[i]["output"]}"""
+			bp = self.model.predict_proba([text],as_numpy=True)[0][1]
+			print(bp)
+			if (bp > 0.5):
+				self.index = i
+				return self.get_index(i)
+		return -1,"","",""		
+  
+	def save_callback(self, idx, instruction='', input='', output=''):
+		print("here)")
+		idx = int(idx)
+		print(idx)
+		print(instruction)
+		self.data[idx]["instruction"] = instruction
+		print(self.data[idx])
+		self.data[idx]["input"] = input
+		self.data[idx]["output"] = output
+		print(f"Index #{idx} Saved.")
+		return None
+
+	def export_callback(self):
+		print(f"Exporting modified data to {SAVE_FILE}...", end = '')
 		
 		with open(SAVE_FILE, 'w', encoding='utf-8') as f:
 			json.dump(self.data, f, indent = 4)
 
+		self.modified = False
 		print(f" Done.")
-
-	def get_num_matches(self):
-		res = 0
-		for item in self.data:
-			res += (re.search(self.pattern_instruction, item['instruction']) or 
-					re.search(self.pattern_input, item['input']) or
-					re.search(self.pattern_output, item['output'])) != None
-		return res
+		return None
 
 	def reset_callback(self):
 		self.index = 0
@@ -96,6 +96,7 @@ class MyAlpacaModifier(AlpacaModifier):
 			)
 
 		self.prev_item = None
+		self.modified = False
 		self.size = len(self.data)
 		self.reset_callback()
 
