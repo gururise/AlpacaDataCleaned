@@ -103,6 +103,11 @@ The original dataset had several issues that likely affect the final performance
 ```
 10. **Extraneous escape and control characters:** The original dataset had several entries with extraneous escape and control characters.
 
+## Finetune Considerations
+Compared to the original alpaca dataset, the average prompt length in this dataset has increased, with a larger number of prompts that exceed a length of 256.  For this reason, it is recommended to set max prompt length during finetuning to at least 512 or higher.
+
+![Distribution of Prompt Lengths](assets/prompt_length_distribution.png)
+
 ## Hugging Face Hub
 The cleaned dataset is also available on the [Hugging Face Hub](https://huggingface.co/datasets/yahma/alpaca-cleaned).
 
