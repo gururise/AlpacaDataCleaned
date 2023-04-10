@@ -1,7 +1,7 @@
 # 🦙🛁 Cleaned Alpaca Dataset
 Welcome to the Cleaned Alpaca Dataset repository! This repository hosts a cleaned and curated version of a dataset used to train the Alpaca LLM (Large Language Model). The original dataset had several issues that are addressed in this cleaned version.
 
-**On April 8, 2023 the uncurated instructions were merged with the Alpaca GPT-4 [dataset](https://github.com/Instruction-Tuning-with-GPT-4/GPT-4-LLM) from Microsoft.**
+**On April 8, 2023 the uncurated instructions were merged with the GPT-4-LLM [dataset](https://github.com/Instruction-Tuning-with-GPT-4/GPT-4-LLM).** Curation of the merged data is ongoing.
 
 A 7b Lora model (trained on April 8, 2023) is available on Hugging Face at [yahma/alpaca-7b-lora](https://huggingface.co/yahma/alpaca-7b-lora)
 
