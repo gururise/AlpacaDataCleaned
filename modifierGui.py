@@ -19,6 +19,7 @@ class MyAlpacaModifier(AlpacaModifier):
 	def get_index(self, idx):
 		idx = int(idx)
 		idx = self.clamp(idx, 0, len(self.data)-1)
+		self.index = idx
 		val = self.check_garbage_collector(self.data[idx]['instruction'], self.data[idx]['input'], self.data[idx]['output'])
 		df = pd.DataFrame(val)
 		
