@@ -3,7 +3,8 @@ Welcome to the Cleaned Alpaca Dataset repository! This repository hosts a cleane
 
 **On April 8, 2023 the uncurated instructions were merged with the GPT-4-LLM [dataset](https://github.com/Instruction-Tuning-with-GPT-4/GPT-4-LLM).** Curation of the merged data is ongoing.
 
-A 7b Lora model (trained on April 8, 2023) is available on Hugging Face at [yahma/alpaca-7b-lora](https://huggingface.co/yahma/alpaca-7b-lora)
+* A 7b Lora model (trained on April 8, 2023) is available on Hugging Face at [yahma/alpaca-7b-lora](https://huggingface.co/yahma/alpaca-7b-lora)
+* A 13B Lora model (trained on April 9, 2023) is available at Hugging Face at [yahma/alpaca-13b-lora](https://huggingface.co/yahma/alpaca-13b-lora)
 
 ## Dataset Quality and its Impact on Model Performance
 
