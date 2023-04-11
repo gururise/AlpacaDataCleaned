@@ -1,0 +1,8 @@
+# Dataset Extensions in Alpaca Format
+The purpose of these extensions is to make it easy to further fine-tune a base LLAMA model trained on the Alpaca Cleaned Dataset. All the dataset have been converted to the alpaca json format. They can be merged with a base alpaca dataset, or used for further fine-tuning. These datasets have not been curated and may contain offensive data.
+
+## Open Instruction Generalist (OIG) Small Chip2 (~200,000)
+Released by LAION-AI, the [chip2 dataset](https://github.com/LAION-AI/Open-Instruction-Generalist/tree/main/small_instruction_set) is supposed to be a small high-quality dataset with the purpose of  to make it easy to convert a language model pretrained on large amounts of text into an instruction following model using a small amount of additional compute via finetuning or softprompt tuning. I took a quick look through this dataset, and it appears to have many duplicates and some questionable content.
+
+## Grade School Math 8k (~7,500)
+GSM8K is a dataset of 8.5K high quality linguistically diverse grade school math word problems created by human problem writers. The dataset is segmented into 7.5K training problems and 1K test problems. I've only converted the training problems. These problems take between 2 and 8 steps to solve, and solutions primarily involve performing a sequence of elementary calculations using basic arithmetic operations (+ − ×÷) to reach the final answer. A bright middle school student should be able to solve every problem. It can be used for multi-step mathematical reasoning. (https://github.com/openai/grade-school-math)
