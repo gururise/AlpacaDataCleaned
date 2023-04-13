@@ -1,14 +1,14 @@
 import json
 import argparse
 
-def merge_ds(datasets,out_file,dedup=True,verbose=False):
+def merge_ds(datasets,out_file,dedupe=False,verbose=False):
     common_objects = []
     idx = 1
     for dataset in datasets:
         with open(dataset, "r") as file:
             ds = json.load(file)
             for data in ds:
-                if (dedup):
+                if (dedupe):
                     if data not in common_objects:
                         common_objects.append(data)
                     else:
@@ -29,12 +29,12 @@ def main():
     # Define the arguments
     parser.add_argument('--datasets', required=True, nargs="+", help='List of datasets to merge')
     parser.add_argument('--output_file', type=str, default="combined_dataset.json", help="output filename")
-    parser.add_argument('--dedup', type=bool, default=True, help='Deduplicate entries')
-    parser.add_argument('--verbose', type=bool, default=True, help="Verbose output")
+    parser.add_argument('--dedupe', action="store_true", help='Deduplicate entries (slow)')
+    parser.add_argument('--verbose', action="store_true", help="Verbose output")
     
     # Parse the arguments
     args = parser.parse_args()
-    merge_ds(args.datasets, args.output_file, args.dedup, args.verbose)
+    merge_ds(args.datasets, args.output_file, args.dedupe, args.verbose)
     
 if __name__ == "__main__":
     main()
